@@ -1,15 +1,18 @@
 body {
-    background-color: rgb(65, 72, 73);
-  }
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #3c3d3e;
+  height: 100vh;
+  margin: 0;
+}
 
-h1 {
-    color: blue;
-  }
-
-p {
-    color: red;
-  }
-
-#game {
-    background-color: red;
+#player {
+  background-color: rgb(0, 255, 34);
+  width: 10px;
+  height: 10px;
+  border: 2px solid black;
+  position: absolute;
+  left: 20px;
+  top: 20px;
 }
