@@ -14,6 +14,8 @@ let pressed_arrow_right = document.getElementById('pressed_arrow_right');
 let LIST_OF_OBJECTS = [rock, rock_round, 
                       arrow_up, pressed_arrow_up, arrow_down, pressed_arrow_down, arrow_left, pressed_arrow_left, arrow_right, pressed_arrow_right];
 
+let objectPositions = LIST_OF_OBJECTS.map(object => object.getBoundingClientRect());
+
 const MOVEMENT_SPEED = 10;
 let positionX = 400;
 let positionY = 400;
@@ -52,18 +54,16 @@ function isColliding(newPositionX, newPositionY) {
   };
 
   // Check all objects for collision
-  for (let object of LIST_OF_OBJECTS) {
-    let object_Position = object.getBoundingClientRect();
-
-    if (!(player_Position.top > object_Position.bottom || 
-          player_Position.bottom < object_Position.top ||
-          player_Position.left > object_Position.right ||
-          player_Position.right < object_Position.left)) {
+  for (let objectPosition of objectPositions) {
+    if (!(player_Position.top > objectPosition.bottom || 
+          player_Position.bottom < objectPosition.top ||
+          player_Position.left > objectPosition.right ||
+          player_Position.right < objectPosition.left)) {
       // Collision detected
       return true;
     }
   }
-  
+
   // No collision with any object
   return false;
 }
