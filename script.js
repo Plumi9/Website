@@ -117,7 +117,6 @@ function teleport_Player_to_newPositionY(newPositionY){
 
 function check_Position_to_scroll() {
   if (!isScrolling && positionY >= window.innerHeight + window.scrollY) {
-    console.log("HELLO");
     isScrolling = true; // Disable further checks during scroll
     pageScroll();
     setTimeout(() => { 
