@@ -1,6 +1,4 @@
 let player = document.getElementById('player');
-let rock = document.getElementById('rock');
-let rock_round = document.getElementById('rock_round');
 
 let arrow_up = document.getElementById('arrow_up');
 let pressed_arrow_up = document.getElementById('pressed_arrow_up');
@@ -11,16 +9,23 @@ let pressed_arrow_left = document.getElementById('pressed_arrow_left');
 let arrow_right = document.getElementById('arrow_right');
 let pressed_arrow_right = document.getElementById('pressed_arrow_right');
 
-let LIST_OF_OBJECTS = [rock, rock_round, 
-                      arrow_up, pressed_arrow_up, arrow_down, pressed_arrow_down, arrow_left, pressed_arrow_left, arrow_right, pressed_arrow_right];
+// List of object to check for collision for movement
+let LIST_OF_OBJECTS = [
+                      arrow_up, pressed_arrow_up, arrow_down, pressed_arrow_down, arrow_left, pressed_arrow_left, arrow_right, pressed_arrow_right,
+                      ];
+let object_Positions = LIST_OF_OBJECTS.map(object => object.getBoundingClientRect());
 
-let objectPositions = LIST_OF_OBJECTS.map(object => object.getBoundingClientRect());
+// List of items for the Gallery on Page 2
+let LIST_OF_ITEMS = document.querySelectorAll('.list .item');
+let hoveredItems = new Set();  // Track which items currently have the hover class
 
+// Values for movement
 const MOVEMENT_SPEED = 10;
-let positionX = 400;
-let positionY = 400;
+let positionX = Math.round(window.innerWidth/2);
+let positionY = 0;
 let keyPresses = {};
 
+// Key event listeners
 window.addEventListener('keydown', keyDownListener);
 function keyDownListener(event) {
   keyPresses[event.key] = true;
@@ -45,6 +50,47 @@ function keyUpListener(event) {
   }
 }
 
+// Handle hover effect when player "hovers over" an item
+function handleItemHoverEffect() {
+  let player_Position = {
+    left: positionX,
+    right: positionX + player.offsetWidth,
+    top: positionY,
+    bottom: positionY + player.offsetHeight,
+  };
+
+  LIST_OF_ITEMS.forEach((item, index) => {
+    let item_Position = item.getBoundingClientRect();
+    let adjusted_Item_Position = {
+      top: item_Position.top + window.scrollY,
+      bottom: item_Position.bottom + window.scrollY,
+      left: item_Position.left + window.scrollX,
+      right: item_Position.right + window.scrollX,
+    };
+
+    // Check if the player is colliding with the item
+    let isColliding = !(player_Position.top > adjusted_Item_Position.bottom ||
+                        player_Position.bottom < adjusted_Item_Position.top ||
+                        player_Position.left > adjusted_Item_Position.right ||
+                        player_Position.right < adjusted_Item_Position.left);
+
+    if (isColliding) {
+      // If the item is colliding and doesn't already have the hover class, add it
+      if (!hoveredItems.has(item)) {
+        item.classList.add('hover');
+        hoveredItems.add(item);  // Track that this item has hover
+      }
+    } else {
+      // If the item is not colliding and has the hover class, remove it
+      if (hoveredItems.has(item)) {
+        item.classList.remove('hover');
+        hoveredItems.delete(item);  // Remove from the hover-tracked set
+      }
+    }
+  });
+}
+
+// Check for object collision
 function isColliding(newPositionX, newPositionY) {
   let player_Position = {
     left: newPositionX,
@@ -53,21 +99,27 @@ function isColliding(newPositionX, newPositionY) {
     bottom: newPositionY + player.offsetHeight,
   };
 
-  // Check all objects for collision
-  for (let objectPosition of objectPositions) {
-    if (!(player_Position.top > objectPosition.bottom || 
-          player_Position.bottom < objectPosition.top ||
-          player_Position.left > objectPosition.right ||
-          player_Position.right < objectPosition.left)) {
+  for (let object of LIST_OF_OBJECTS) {
+    let object_Position = object.getBoundingClientRect();
+    let adjusted_Object_Position = {
+      top: object_Position.top + window.scrollY,
+      bottom: object_Position.bottom + window.scrollY,
+      left: object_Position.left + window.scrollX,
+      right: object_Position.right + window.scrollX
+    };
+
+    if (!(player_Position.top > adjusted_Object_Position.bottom || 
+          player_Position.bottom < adjusted_Object_Position.top ||
+          player_Position.left > adjusted_Object_Position.right ||
+          player_Position.right < adjusted_Object_Position.left)) {
       // Collision detected
       return true;
     }
   }
-
-  // No collision with any object
   return false;
 }
 
+// Scroll Logic
 let has_scrolled = false;
 let isScrolling = false;
 let scroll_counter = 1;
@@ -75,8 +127,6 @@ function pageScroll() {
   const targetScrollY = 1240 * scroll_counter; // The target scroll position
   const scrollStep = 20; // How many pixels to scroll per frame
   const duration = 2000; // Duration of the scroll in milliseconds
-  const totalSteps = duration / 16; // Total frames (approx. 60 FPS)
-  let currentStep = 0;
   
   if (!has_scrolled) {
     has_scrolled = true; // Ensure this runs only once per scroll action
@@ -92,13 +142,6 @@ function pageScroll() {
       }
 
       window.scrollBy(0, scrollStep);
-      currentStep++;
-      
-      // Stop if we reach the maximum number of steps
-      if (currentStep >= totalSteps) {
-        clearInterval(scrollInterval);
-        window.scrollTo(0, targetScrollY); // Snap to the target
-      }
     }, 16); // Approximately 60 FPS
 
     teleport_Player_to_newPositionY(targetScrollY);
@@ -125,6 +168,7 @@ function check_Position_to_scroll() {
   }
 }
 
+// Actual game loop
 function gameLoop() {
   let moveX = 0;
   let moveY = 0;
@@ -146,7 +190,6 @@ function gameLoop() {
     moveX = MOVEMENT_SPEED;
     pressed_arrow_right.removeAttribute("hidden");
   }
-  // User Input
 
   // Normalize diagonal movement speed
   if (moveX !== 0 && moveY !== 0) {
@@ -164,13 +207,15 @@ function gameLoop() {
   if(!isColliding(positionX, newPositionY)){
     positionY = newPositionY;
   }
-  // Check for collision
 
   // Update Player position to DOM
   player.style.left = positionX + 'px';
   player.style.top = positionY + 'px';
 
   check_Position_to_scroll();
+
+  // Handle hover effects
+  handleItemHoverEffect();
 
   window.requestAnimationFrame(gameLoop);
 }
