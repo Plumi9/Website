@@ -1,6 +1,7 @@
 body {
+  font-family: Ja;
   justify-content: center;
-  background: #974a0b;
+  background: #008080;
   height: 1000vh;
 }
 
@@ -11,8 +12,27 @@ body {
 }
 
 .text{
+  color: white;
   display: flex;
   justify-content: center;
+}
+
+.game-container {
+  width: 100%;
+  min-height: 1000vh;
+  /*border: 10px solid black;*/
+  box-sizing: border-box;
+  position: relative;
+}
+
+#top-wall{
+  border: 5px solid white;
+}
+
+#bottom-wall{
+  position:relative;
+  top: 1000vh;
+  border: 5px solid white;
 }
 
 .list{

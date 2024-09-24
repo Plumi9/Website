@@ -8,9 +8,11 @@ let arrow_left = document.getElementById('arrow_left');
 let pressed_arrow_left = document.getElementById('pressed_arrow_left');
 let arrow_right = document.getElementById('arrow_right');
 let pressed_arrow_right = document.getElementById('pressed_arrow_right');
+let top_wall = document.getElementById('top-wall');
+let bottom_wall = document.getElementById('bottom_wall');
 
 // List of object to check for collision for movement
-let LIST_OF_OBJECTS = [
+let LIST_OF_OBJECTS = [top_wall,
                       arrow_up, pressed_arrow_up, arrow_down, pressed_arrow_down, arrow_left, pressed_arrow_left, arrow_right, pressed_arrow_right,
                       ];
 let object_Positions = LIST_OF_OBJECTS.map(object => object.getBoundingClientRect());
