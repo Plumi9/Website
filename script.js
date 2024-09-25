@@ -8,9 +8,11 @@ let arrow_left = document.getElementById('arrow_left');
 let pressed_arrow_left = document.getElementById('pressed_arrow_left');
 let arrow_right = document.getElementById('arrow_right');
 let pressed_arrow_right = document.getElementById('pressed_arrow_right');
+let game_container = document.getElementById('game-container');
+let walls = document.querySelectorAll('.wall');
 
 // List of object to check for collision for movement
-let LIST_OF_OBJECTS = [
+let LIST_OF_OBJECTS = [...walls,
                       arrow_up, pressed_arrow_up, arrow_down, pressed_arrow_down, arrow_left, pressed_arrow_left, arrow_right, pressed_arrow_right,
                       ];
 let object_Positions = LIST_OF_OBJECTS.map(object => object.getBoundingClientRect());
@@ -59,35 +61,58 @@ function handleItemHoverEffect() {
     bottom: positionY + player.offsetHeight,
   };
 
-  LIST_OF_ITEMS.forEach((item, index) => {
+  LIST_OF_ITEMS.forEach((item) => {
     let item_Position = item.getBoundingClientRect();
     let adjusted_Item_Position = {
-      top: item_Position.top + window.scrollY,
+      top: item_Position.top + window.scrollY,  // Adjust for scrolling
       bottom: item_Position.bottom + window.scrollY,
-      left: item_Position.left + window.scrollX,
-      right: item_Position.right + window.scrollX,
+      left: item_Position.left + window.scrollX,  // Adjust for scrolling
+      right: item_Position.right + window.scrollX
     };
 
-    // Check if the player is colliding with the item
     let isColliding = !(player_Position.top > adjusted_Item_Position.bottom ||
                         player_Position.bottom < adjusted_Item_Position.top ||
                         player_Position.left > adjusted_Item_Position.right ||
                         player_Position.right < adjusted_Item_Position.left);
 
     if (isColliding) {
-      // If the item is colliding and doesn't already have the hover class, add it
       if (!hoveredItems.has(item)) {
         item.classList.add('hover');
-        hoveredItems.add(item);  // Track that this item has hover
+        hoveredItems.add(item);
       }
     } else {
-      // If the item is not colliding and has the hover class, remove it
       if (hoveredItems.has(item)) {
         item.classList.remove('hover');
-        hoveredItems.delete(item);  // Remove from the hover-tracked set
+        hoveredItems.delete(item);
       }
     }
   });
+}
+
+// Check collision with Walls
+function isCollidingWithBoundary(newPositionX, newPositionY) {
+  let gameContainerRect = game_container.getBoundingClientRect();
+  
+  let playerWidth = player.offsetWidth;
+  let playerHeight = player.offsetHeight;
+
+  // Get boundaries of the game container
+  let boundaryLeft = gameContainerRect.left + window.scrollX;
+  let boundaryRight = gameContainerRect.right + window.scrollX;
+  let boundaryTop = gameContainerRect.top + window.scrollY;
+  let boundaryBottom = gameContainerRect.bottom + window.scrollY;
+
+  // Check if the player's new position would go out of bounds
+  if (
+    newPositionX < boundaryLeft || 
+    newPositionX + playerWidth > boundaryRight || 
+    newPositionY < boundaryTop || 
+    newPositionY + playerHeight > boundaryBottom
+  ) {
+    return true; // Collides with boundary
+  }
+  
+  return false;
 }
 
 // Check for object collision
@@ -102,21 +127,21 @@ function isColliding(newPositionX, newPositionY) {
   for (let object of LIST_OF_OBJECTS) {
     let object_Position = object.getBoundingClientRect();
     let adjusted_Object_Position = {
-      top: object_Position.top + window.scrollY,
+      top: object_Position.top + window.scrollY, // Adjust for vertical scroll
       bottom: object_Position.bottom + window.scrollY,
-      left: object_Position.left + window.scrollX,
+      left: object_Position.left + window.scrollX, // Adjust for horizontal scroll
       right: object_Position.right + window.scrollX
     };
 
+    // Check if player collides with the object
     if (!(player_Position.top > adjusted_Object_Position.bottom || 
           player_Position.bottom < adjusted_Object_Position.top ||
           player_Position.left > adjusted_Object_Position.right ||
           player_Position.right < adjusted_Object_Position.left)) {
-      // Collision detected
-      return true;
+      return true; // Collision detected
     }
   }
-  return false;
+  return false; // No collision
 }
 
 // Scroll Logic
@@ -200,11 +225,11 @@ function gameLoop() {
   let newPositionX = positionX + moveX;
   let newPositionY = positionY + moveY;
   
-  // Check for collision
-  if(!isColliding(newPositionX, positionY)){
+  // Check for collision with objects and boundaries
+  if (!isColliding(newPositionX, positionY) && !isCollidingWithBoundary(newPositionX, positionY)) {
     positionX = newPositionX;
   }
-  if(!isColliding(positionX, newPositionY)){
+  if (!isColliding(positionX, newPositionY) && !isCollidingWithBoundary(positionX, newPositionY)) {
     positionY = newPositionY;
   }
 
