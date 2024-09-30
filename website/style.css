@@ -1,0 +1,181 @@
+@font-face {
+  font-family: 'Jacquarda Bastarda 9';
+  src:url('./fonts/JacquardaBastarda9-Regular.svg') format('svg'), 
+      url('./fonts/JacquardaBastarda9-Regular.woff2') format('woff2'),
+      url('JacquardaBastarda9-Regular.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+.wall {
+  position: absolute;
+  background-color: #000; /* Make walls visible */
+  width: 100%; /* Example width */
+  height: 20px;  /* Example height */
+}
+
+#wall1{
+  top: 1200px;
+}
+
+#wall2{
+  top: 2400px;
+}
+
+#wall3{
+  top: 3600px;
+}
+
+#images-container{
+  position: relative;
+}
+
+#bunny{
+  position: absolute;
+  top: -100px;
+  left: 400px;
+  scale: 0.5;
+}
+
+#bottom-text{
+  position: absolute;
+  top: 720px;
+  left: 830px;
+  scale: 0.4;
+}
+
+#soyjak1{
+  position: absolute;
+  top: -420px;
+  scale: 0.15;
+}
+
+#soyjak2{
+  position: absolute;
+  top: -700px;
+  left: 450px;
+  scale: 0.15;
+}
+
+.text{
+  font-family: "Jacquarda Bastarda 9";
+  font-weight:normal;
+  font-style:normal;
+  font-size: 50px;
+}
+
+body {
+  overflow-y: hidden;
+  justify-content: center;
+  background: #008080;
+}
+
+#player {
+  width: 20px;
+  height: 20px;
+  position: absolute;
+}
+
+.text{
+  color: white;
+  display: flex;
+  justify-content: center;
+}
+
+.game-container {
+  width: 100%;
+  min-height: 355vh;
+  border: 10px solid black;
+  box-sizing: border-box;
+  position: relative;
+}
+
+.list{
+  transform-style: preserve-3d;
+  transform: perspective(10000px);
+  justify-content: center;
+  position: relative;
+  top: 1400px;
+  display: flex;
+}
+
+.list .item{
+  transition: .5s;
+  filter:brightness(0);
+  height: 200px;
+  margin: 5px;
+}
+/*hovered item*/
+.list .item.hover{
+  filter:brightness(1);
+  transform: translateZ(-140px) scale(1.2);
+}
+/*item right 1*/
+.list .item.hover + .item{
+  filter:brightness(0.6);
+  transform: translateZ(-105px) scale(1.14) rotateY(-40deg);
+}
+/*item right 2*/
+.list .item.hover + .item + .item{
+  filter:brightness(0.4);
+  transform: translateZ(-35px) scale(1.10) rotateY(-20deg);
+}
+/*item right 3*/
+.list .item.hover + .item + .item + .item{
+  filter:brightness(0.2);
+  transform: translateZ(-5px) scale(1.05) rotateY(-10deg);
+}
+/*item left 1*/
+.list .item:has(+ .item.hover){
+  filter:brightness(0.6);
+  transform: translateZ(-105px) scale(1.14) rotateY(40deg);
+}
+/*item left 2*/
+.list .item:has(+ .item + .item.hover){
+  filter:brightness(0.4);
+  transform: translateZ(-35px) scale(1.10) rotateY(20deg);
+}
+/*item left 3*/
+.list .item:has(+ .item + .item + .item.hover){
+  filter:brightness(0.4);
+  transform: translateZ(-5px) scale(1.05) rotateY(10deg);
+}
+
+#controller{
+  position: absolute;
+  top: 500px;
+}
+
+.unpressed_arrow{
+  position: absolute;
+}
+
+.pressed_arrow{
+  position: absolute;
+}
+
+#arrow_up,#pressed_arrow_up{
+  top: 0px;
+  left: 200px;
+}
+
+#arrow_down,#pressed_arrow_down{
+  top: 80px;
+  left: 200px;
+}
+
+#arrow_left,#pressed_arrow_left{
+  top: 80px;
+  left: 120px;
+}
+
+#arrow_right,#pressed_arrow_right{
+  top: 80px;
+  left: 280px;
+}
+
+#text3{
+  position: absolute;
+  top: 2800px;
+}
