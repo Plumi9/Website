@@ -259,6 +259,6 @@ function romanToInteger(roman) {
 
 // onclick Button after solving riddle
 function changePage(){
-    let path = "./../website/index.html";
+    let path = "./website/index.html";
     window.location.href = path;
 }
